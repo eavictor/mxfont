@@ -23,7 +23,7 @@ def main():
         filename = ttffile.stem
         dirname = ttffile.parent
         avail_chars = get_filtered_chars(ttffile)
-        with open((dirname / (filename+".txt")), "w") as f:
+        with open((dirname / (filename+".txt")), "w", encoding="utf-8") as f:
             f.write("".join(avail_chars))
 
 
