@@ -6,15 +6,14 @@ MIT license
 
 import argparse
 from pathlib import Path
-
 import torch
-
 from utils import refine, save_tensor_to_image
 from datasets import get_test_loader
 from models import Generator
 from sconf import Config
 from train import setup_transforms
 import datetime
+import math
 
 
 def eval_ckpt():
@@ -41,7 +40,7 @@ def eval_ckpt():
         weight = weight["generator_ema"]
     gen.load_state_dict(weight)
     test_dset, test_loader = get_test_loader(cfg, val_transform)
-    generated = 0
+    char_count = 0
     for batch in test_loader:
         style_imgs = batch["style_imgs"].cuda()
         char_imgs = batch["source_imgs"].unsqueeze(1).cuda()
@@ -51,16 +50,17 @@ def eval_ckpt():
         print(f"generate batch: {chars}")
         for image, font, char in zip(refine(out), fonts, chars):
             (img_dir / font).mkdir(parents=True, exist_ok=True)
-            path = img_dir / font / f"{char}.png"  # TODO: 改成輸出unicode編號
+            path = img_dir / font / f"{ord(char)}.png"  # 輸出unicode編號，避免踩到系統保留字元，後面再用char轉回來
             save_tensor_to_image(image, path)
-            generated += 1
+            char_count += 1
+
     finish_time = datetime.datetime.now(datetime.UTC)
     time_spent = (finish_time - start_time).total_seconds()
-    days = time_spent // 86400
-    hours = time_spent % 86400 // 3600
-    minutes = time_spent % 3600 // 60
-    seconds = time_spent % 60
-    print(f"總共耗時{days}天{hours}小時{minutes}分{seconds}秒，總共造出{generated}個中文字")
+    days = int(time_spent // 86400)
+    hours = int(time_spent % 86400 // 3600)
+    minutes = int(time_spent % 3600 // 60)
+    seconds = math.ceil(time_spent % 60)
+    print(f"總共耗時{days}天{hours}小時{minutes}分{seconds}秒，總共造出{char_count}個文字")
 
 
 if __name__ == "__main__":
