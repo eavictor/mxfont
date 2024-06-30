@@ -7,7 +7,7 @@ except ModuleNotFoundError:
     print("""
     ffpython is required to run this script !!!
     
-    1. Download (Click on your platform name): https://fontforge.org/en-US/downloads/windows/
+    1. Download (Click on your platform name): https://fontforge.org/en-US/downloads/
     2. Install FontForge.
     3. Add ffpython to path (require reboot if using windows), or call ffpython directly with full path.
     4. Execute this script with ffpython.
