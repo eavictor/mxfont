@@ -8,25 +8,26 @@
 4. 增加 png -> svg -> ttf的轉檔(5.7GB左右)
 
 ### 執行速度＆注意事項
-使用RTX4090，生完「微軟正黑體.ttf」所有的字大約需要70分鐘左右(batch_size = 8)，約一秒8個字。
-png轉svg大約需要180分鐘左右(Apple M2 Max 12核CPU全速跑)
-放svg圖案的字料夾有5.7GB左右，非常大
+
+1. 使用RTX4090，生完「微軟正黑體.ttf」所有的字大約需要70分鐘左右(batch_size = 8)，約一秒8個字。
+2. png轉svg大約需要180分鐘左右(Apple M2 Max 12核CPU全速跑)
+3. 放svg圖檔共約5.7GB
 
 
 ### 安裝方法及注意事項
 
-1. 有一張NV RTX GPU，顯示卡記憶體有8GB以上，不夠的話自己去改模型訓練或買RTX4090！
+1. 有一張NV RTX GPU，顯示卡記憶體有越大越好，我用RTX4090所以不知道最低要求是多少！
 2. 安裝CUDA 12.1：https://developer.nvidia.com/cuda-12-1-0-download-archive
 3. pip3 install torch==2.3.1+cu121 torchvision==0.18.1 torchaudio==2.3.1+cu121 --index-url https://download.pytorch.org/whl/cu121
 4. pip3 install -Ur requirements.txt
 5. 安裝FontForge，點自己的作業系統來下載安裝檔：https://fontforge.org/en-US/downloads/
 
-### 使用方法
+### 使用方式
 
 1. 在「data/images/test」底下建立一個資料夾(英文名)，裡面放幾張自己的「128x128灰階手寫字」，檔案名稱就是手寫的字，副檔名一定要是png。
-2. 執行指令，AI自動生成的字體會在「results/my_ai_chars」裡面，多久能跑完取決於GPU有多強。
+2. (警告：GPU 100%) 執行指令，AI自動生成的字體會在「results/my_ai_chars」裡面，多久能跑完看GPU有多強。
 > python eval.py cfgs/eval.yaml --weight generator.pth --result_dir results/my_ai_chars 
-3. 執行指令(png2svg)，自動把png換成svg，容量佔用也會往上飆升，多久能跑完取決於CPU有多強。
+3. (警告：CPU 100%) 執行指令(png2svg)，自動把png換成svg，容量佔用也會往上飆升，多久能跑完看CPU有多強。
 > python png2svg results/my_ai_chars
 4. 執行指令(svg2ttf)，把svg檔案壓成一個ttf檔案，要用FontForge帶的ffpython來執行。
 > ffpython svg2ttf results/my_ai_chars output.ttf

@@ -1,13 +1,14 @@
 import multiprocessing
 import pathlib
 import argparse
-from PIL import Image
 import operator
 from collections import deque
 from io import StringIO
 import os
 import logging
 import datetime
+import math
+from PIL import Image
 
 
 logging.basicConfig(level=logging.INFO)
@@ -234,10 +235,15 @@ def main():
     parser.add_argument("png_folder", type=str, help="Folder containing png files")
     args = parser.parse_args()
     png_folder = pathlib.Path(args.png_folder)
-    start = datetime.datetime.now()
+    start_time = datetime.datetime.now()
     multiprocess_conversion(png_folder)
-    finish = datetime.datetime.now()
-    delta = finish - start
+    finish_time = datetime.datetime.now()
+    time_spent = (finish_time - start_time).total_seconds()
+    days = int(time_spent // 86400)
+    hours = int(time_spent % 86400 // 3600)
+    minutes = int(time_spent % 3600 // 60)
+    seconds = math.ceil(time_spent % 60)
+    print(f"PNG轉換成SVG 總共耗時{days}天{hours}小時{minutes}分{seconds}秒")
 
 
 if __name__ == '__main__':
