@@ -1,3 +1,45 @@
+# Part of project modified by eavictor
+
+### 更改處
+
+1. 改為輸出所有「微軟正黑體.ttf」的字，AI模型生成字型的時候會顯示正在模仿的字
+2. 還沒增加自動裁切A4 300ppi的128x128圖片功能
+3. 要參考的手寫字尚未定案，以提供AI模型最佳模仿(已寫好彩色轉灰階)
+4. 增加 png -> svg -> ttf的轉檔(5.7GB左右)
+
+### 執行速度＆注意事項
+使用RTX4090，生完「微軟正黑體.ttf」所有的字大約需要70分鐘左右(batch_size = 8)，約一秒8個字。
+png轉svg大約需要180分鐘左右(Apple M2 Max 12核CPU全速跑)
+放svg圖案的字料夾有5.7GB左右，非常大
+
+
+### 安裝方法及注意事項
+
+1. 有一張NV RTX GPU，顯示卡記憶體有8GB以上，不夠的話自己去改模型訓練或買RTX4090！
+2. 安裝CUDA 12.1：https://developer.nvidia.com/cuda-12-1-0-download-archive
+3. pip3 install torch==2.3.1+cu121 torchvision==0.18.1 torchaudio==2.3.1+cu121 --index-url https://download.pytorch.org/whl/cu121
+4. pip3 install -Ur requirements.txt
+5. 安裝FontForge，點自己的作業系統來下載安裝檔：https://fontforge.org/en-US/downloads/
+
+### 使用方法
+
+1. 在「data/images/test」底下建立一個資料夾(英文名)，裡面放幾張自己的「128x128灰階手寫字」，檔案名稱就是手寫的字，副檔名一定要是png。
+2. 執行指令，AI自動生成的字體會在「results/my_ai_chars」裡面，多久能跑完取決於GPU有多強。
+> python eval.py cfgs/eval.yaml --weight generator.pth --result_dir results/my_ai_chars 
+3. 執行指令(png2svg)，自動把png換成svg，容量佔用也會往上飆升，多久能跑完取決於CPU有多強。
+> python png2svg results/my_ai_chars
+4. 執行指令(svg2ttf)，把svg檔案壓成一個ttf檔案，要用FontForge帶的ffpython來執行。
+> ffpython svg2ttf results/my_ai_chars output.ttf
+
+### 只有換掉「微軟正黑體.ttf」改成你自己要參考的字體需要做的事
+
+1. 刪除「微軟正黑體.ttf」和「微軟正黑體.txt」。
+2. 把新的ttf字體放進「data/ttfs/prod」。
+3. 修改「cfgs/eval.yaml」，把「source_font」的值換成你用的新字體。
+4. 執行指令(get_chars_from_ttf.py)，把字型內的所有字元存成txt檔案。
+> python get_chars_from_ttf.py --root_dir data/ttfs/prod
+5. 照著使用方法做
+
 # MX-Font (ICCV 2021)
 
 **NOTICE: We release the unified few-shot font generation repository ([clovaai/fewshot-font-generation](https://github.com/clovaai/fewshot-font-generation)). If you are interested in using our implementation, please visit the unified repository.**
